@@ -36,7 +36,14 @@ RUN curl https://packages.osrfoundation.org/gazebo.gpg \
     > /etc/apt/sources.list.d/gazebo-stable.list && \
     apt-get update && apt-get install -y \
     gz-harmonic \
-    && rm -rf /var/list/apt/lists/*
+    && rm -rf /var/lib/apt/lists/*
+
+# install and pre-cache Gazebo Fuel assets
+# RUN apt-get update && apt-get install -y \
+#     gz-tools \
+#     && rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /home/ubuntu/.gz/fuel && \
+    gz fuel download -u https://fuel.gazebosim.org
 
 # python packages
 RUN pip3 install python-fcl --break-system-packages
@@ -104,7 +111,9 @@ RUN dos2unix /entrypoint.sh && chmod +x /entrypoint.sh
 # environment setup
 RUN echo "source /opt/ros/jazzy/setup.bash" >> /etc/bash.bashrc && \
     echo "source /home/ubuntu/turtlebot3_ws/install/setup.bash" >> /etc/bash.bashrc && \
-    echo "export ROS_DOMAIN_ID=30" >> /etc/bash.bashrc
+    echo "export ROS_DOMAIN_ID=30" >> /etc/bash.bashrc && \
+    echo "export GZ_SIM_RESOURCE_PATH=/usr/share/gz" >> /etc/bash.bashrc && \
+    echo "export IGN_GAZEBO_RESOURCE_PATH=/usr/share/gz" >> /etc/bash.bashrc
 
     # echo "source /home/ubuntu/ros_packages/install/setup.bash" >> /etc/bash.bashrc && \
 
